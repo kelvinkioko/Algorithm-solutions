@@ -194,4 +194,22 @@ class Backup : AppCompatActivity() {
 
     fun numberDig(n: Int, d: Int): Int = (0..n).joinToString { "${it * it}" }.count { "$it" == "$d" }
 
+    /**
+     * Complete the method/function so that it converts dash/underscore delimited words into camel casing.
+     * The first word within the output should be capitalized only if the original word was capitalized
+     * (known as Upper Camel Case, also often referred to as Pascal case).
+     *
+     * println("toCamelCase ${toCamelCase(str = "The-stealth_warrior")}")
+     *
+     * "the-stealth-warrior" gets converted to "theStealthWarrior"
+     */
+
+    // Best solution
+    fun toCamelCaseBestSolution(str: String) =
+        str.split('-', '_').mapIndexed { i, it -> if (i != 0) it.capitalize() else it }.joinToString("")
+
+
+    // My solution
+    fun toCamelCase(str:String):String = if(str.isNotEmpty()) str.split("_", "-", ignoreCase = true).joinToString("") { it.capitalize() }.replaceFirst(str[0].toUpperCase(), str[0]) else str
+
 }
