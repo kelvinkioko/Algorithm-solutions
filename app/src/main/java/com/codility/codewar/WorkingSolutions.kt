@@ -2,6 +2,7 @@ package com.codility.codewar
 
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Collections
+import kotlin.math.roundToInt
 
 class Backup : AppCompatActivity() {
     private fun solution(N: Int, S: String): Int {
@@ -10,6 +11,10 @@ class Backup : AppCompatActivity() {
         val seatRightLabels = arrayOf("A", "B", "C")
         val seatMiddleLabels = arrayOf("D", "E", "F", "G")
         val seatLeftLabels = arrayOf("H", "J", "K")
+
+        val match = "photo.jpg, Warsaw, 2013-09-05 14:08:15"
+
+        println("String MATCH ${match.matches("\\w{1,20}\\.\\w{3,4}, \\w{1,20}, \\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}".toRegex(setOf(RegexOption.IGNORE_CASE)))}")
 
         for (i in 1 until N + 1) {
             val rightIsleOptions = arrayOf("$i${seatRightLabels[1]}", "$i${seatRightLabels[2]}", "$i${seatMiddleLabels[0]}", "$i${seatMiddleLabels[1]}")
@@ -50,6 +55,27 @@ class Backup : AppCompatActivity() {
 //      }
 
     private fun anotherSolution(A: IntArray, K: Int): Boolean {
+        val n = A.size
+        for (i in 0 until n - 1) {
+            println("Solution returned i $i")
+
+            if (A[i] > A[i + 1]) {
+                println("Solution returned i false")
+                return false
+            }
+        }
+        println("Solution returned  A[n - 1] != K ${ A[n - 1] != K}")
+        println("Solution returned  A[0] != 1 ${A[0] != 1}")
+        if (A[0] >= 1 && A[n - 1] != K) {
+            println("Solution returned - false")
+            return false
+        } else {
+            println("Solution returned - true")
+            return true
+        }
+    }
+
+    fun solutioner(A: IntArray, K: Int): Boolean {
         val n = A.size
         for (i in 0 until n - 1) {
             println("Solution returned i $i")
@@ -146,6 +172,17 @@ class Backup : AppCompatActivity() {
         return romanNumber
     }
 
+
+    /**
+     * 1234
+     *
+     * 1 oneth
+     * 2 tenth
+     * 3 hund
+     * 4 thound
+     *
+     */
+
     /**
      * Reverse words function
      */
@@ -212,4 +249,201 @@ class Backup : AppCompatActivity() {
     // My solution
     fun toCamelCase(str:String):String = if(str.isNotEmpty()) str.split("_", "-", ignoreCase = true).joinToString("") { it.capitalize() }.replaceFirst(str[0].toUpperCase(), str[0]) else str
 
+    /**
+     * josephus_survivor(7,3) => means 7 people in a circle;
+     * one every 3 is eliminated until one remains
+     * [1,2,3,4,5,6,7] - initial sequence
+     * [1,2,4,5,6,7] => 3 is counted out
+     * [1,2,4,5,7] => 6 is counted out
+     * [1,4,5,7] => 2 is counted out
+     * [1,4,5] => 7 is counted out
+     * [1,4] => 5 is counted out
+     * [4] => 1 counted out, 4 is the last element - the survivor!
+     **/
+
+    fun josephusSurvivor(n: Int, k: Int): Int {
+        var nArray = IntArray(n) { it + 1 }.toList()
+        return if (nArray.size == 1) {
+            n
+        } else {
+            do {
+                Collections.rotate(nArray, -(k - 1))
+                nArray = nArray.drop(1)
+            } while (nArray.size != 1)
+
+            nArray[0]
+        }
+    }
+
+    /**
+     * int.coerceIn forces the integer to be within the set bounds
+     * if int -s -10 it gets upgraded to the lowest bound which is 0
+     * same applies to a number higher than 255
+     */
+    fun rgb(r: Int, g: Int, b: Int): String = String.format(
+        "%02X%02X%02X",
+        r.coerceIn(0..255),
+        g.coerceIn(0..255),
+        b.coerceIn(0..255))
+
+
+    /**
+     * Help the bookseller !
+     */
+    object StockListClever {
+        fun stockSummary(lstOfArt: Array<String>, lstOfCat: Array<String>): String {
+            if (lstOfArt.isEmpty()) return ""
+            val counts = lstOfArt.groupingBy { it.take(1) }.fold(0) { acc, s -> acc + s.split(" ")[1].toInt() }
+            return lstOfCat.joinToString(" - ") { "($it : ${counts.getOrDefault(it, 0)})" }
+        }
+    }
+
+    object StockList {
+        fun stockSummary(listOfArt: Array<String>, listOfCat: Array<String>): String {
+
+            return if (listOfArt.isEmpty() || listOfCat.isEmpty()) {
+                ""
+            } else {
+                val finalResponse = mutableListOf<String>()
+
+                listOfCat.forEach { category ->
+                    var count = 0
+                    listOfArt.filter { it.startsWith(category, ignoreCase = true) }.map {
+                        count += it.split(" ")[1].toInt()
+                    }
+                    finalResponse.add("($category : ${count})")
+                }
+
+                finalResponse.joinToString(" - ")
+            }
+        }
+    }
+
+    fun inArray(array1: Array<String>, array2: Array<String>): Array<String> {
+        val r = mutableListOf<String>()
+        if (array1.isEmpty() || array2.isEmpty()) return r.toTypedArray()
+        array2.forEach { string ->
+            array1.map { stringOne ->
+                if (stringOne in string && !r.contains(stringOne)) r.apply { add(stringOne); sort() }
+            }
+        }
+
+        return r.toTypedArray()
+
+        // Solution 2
+        return array1.filter{e->array2.any{it.contains(e)}}.distinct().sorted().toTypedArray()
+    }
+
+    object BuyCar {
+        fun nbMonths(
+            startPriceOld: Int = 2000,
+            startPriceNew: Int = 8000,
+            savingperMonth: Int = 1000,
+            percentLossByMonth: Double = 1.5
+        ): Pair<Int, Int> {
+            println("startPriceOld $startPriceOld")
+            if (startPriceOld > startPriceNew) return Pair(0, startPriceOld - startPriceNew)
+
+            var monthPercentageLossIncreaseCounter = 0
+            val savingProgress = SavingProgress(
+                oldVehiclePrice = startPriceOld.toDouble(),
+                newVehiclePrice = startPriceNew.toDouble(),
+                percentLossByMonth = percentLossByMonth
+            )
+
+            var canIAffordThis: Boolean
+
+            do {
+                if (monthPercentageLossIncreaseCounter >= 1) {
+                    monthPercentageLossIncreaseCounter = 0
+                    savingProgress.percentLossByMonth = savingProgress.percentLossByMonth + 0.5
+                } else {
+                    monthPercentageLossIncreaseCounter = 1
+                }
+
+                savingProgress.apply {
+                    oldVehiclePrice *= ((100 - savingProgress.percentLossByMonth) / 100)
+                    newVehiclePrice *= ((100 - savingProgress.percentLossByMonth) / 100)
+                    monthlySavings += savingperMonth
+                }
+                canIAffordThis = ((savingProgress.oldVehiclePrice + savingProgress.monthlySavings) >= savingProgress.newVehiclePrice)
+            } while (!canIAffordThis)
+
+            val months = savingProgress.monthlySavings / savingperMonth
+            val remainder = (savingProgress.oldVehiclePrice + savingProgress.monthlySavings) - savingProgress.newVehiclePrice
+
+            return Pair(months.roundToInt(), remainder.roundToInt())
+        }
+    }
+
+    data class SavingProgress(
+        var oldVehiclePrice: Double = 0.0,
+        var newVehiclePrice: Double = 0.0,
+        var percentLossByMonth: Double = 0.0,
+        var monthlySavings: Double = 0.0
+    )
+}
+
+
+
+fun main(args: Array<String>) {
+    val prop = "abc"::length
+    println(prop.get())
+}
+
+fun productFibBestSolution(prod: Long):LongArray {
+    var (a, b, check) = longArrayOf(0, 1, 0)
+    while (check < prod) {
+        a = b.also { b += a }
+        check = a * b
+    }
+    return longArrayOf(a, b, if (check == prod) 1L else 0L)
+}
+
+fun productFib(prod: Long) : LongArray {
+    val fibStack = mutableListOf<Long>(0, 1)
+
+    tailrec fun encodeAux() : LongArray {
+        fibStack.add(fibStack[fibStack.size - 1] + fibStack[fibStack.size - 2])
+
+        val prodCompare = fibStack[fibStack.size - 1].toULong() * fibStack[fibStack.size - 2].toULong()
+
+        return when {
+            prodCompare.toLong() == prod ->
+                longArrayOf(
+                    fibStack[fibStack.size - 2],
+                    fibStack[fibStack.size - 1],
+                    1
+                )
+            prodCompare.toLong() > prod ->
+                longArrayOf(
+                    fibStack[fibStack.size - 2],
+                    fibStack[fibStack.size - 1],
+                    0
+                )
+            else -> {
+                encodeAux()
+            }
+        }
+    }
+
+    return encodeAux()
+}
+
+fun solution(A: IntArray): Int {
+    val max = A.indices.map { i: Int -> A[i] }.max()
+
+    var solutionAnswer = 0
+    if (max == null || max <= 0) {
+        solutionAnswer = 1
+    } else {
+        for (x in 1 until (max + 2)) {
+            if (!A.contains(x)) {
+                solutionAnswer = x
+                break
+            }
+        }
+    }
+
+    return solutionAnswer
 }
