@@ -431,7 +431,7 @@ fun productFib(prod: Long) : LongArray {
 }
 
 fun solution(A: IntArray): Int {
-    val max = A.indices.map { i: Int -> A[i] }.max()
+    val max = A.indices.map { i: Int -> A[i] }.maxOrNull()
 
     var solutionAnswer = 0
     if (max == null || max <= 0) {

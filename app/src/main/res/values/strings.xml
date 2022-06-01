@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Code War</string>
+    <string name="available_balance">Available balance</string>
+    <string name="every">Every</string>
 </resources>
