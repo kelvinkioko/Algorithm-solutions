@@ -5,9 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import java.text.DecimalFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.GregorianCalendar
 import java.util.regex.Pattern
-import kotlin.math.ceil
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,14 +17,122 @@ class MainActivity : AppCompatActivity() {
 }
 
 fun main(args: Array<String>) {
-	println("Number of months is -${"".getInitials()}-")
-	println("Number of months is -${" ".getInitials()}-")
-	println("Number of months is -${"Kelvin  ".getInitials()}-")
-	println("Number of months is -${"Kelvin  Kioko".getInitials()}-")
+	println("romanToInt *${romanToInt(s = "MCMXCIV")}-")
+	println("romanToInt *${romanToInt(s = "III")}-")
+	println("romanToInt *${romanToInt(s = "LVIII")}-")
+	// println("ListNode -${isPalindrome(x = -121)}-")
+}
+
+fun romanToInt(s: String = "MCMXCIV"): Int {
+	val romanMap: HashMap<String, Int> = hashMapOf("M" to 1000, "D" to 500, "C" to 100, "L" to 50, "X" to 10, "V" to 5, "I" to 1)
+	var romanInt = 0
+
+	for (n in s.indices) {
+		if (n + 1 < s.length && (romanMap[s[n].toString()] ?: 0) < (romanMap[s[n + 1].toString()] ?: 0)) {
+			romanInt -= romanMap[s[n].toString()] ?: 0
+		} else {
+			romanInt += romanMap[s[n].toString()] ?: 0
+		}
+	}
+	return romanInt
+}
+
+fun isPalindrome(x: Int): Boolean {
+	// Solution one
+	var xx = x
+
+	if (xx < 0 || xx != 0 && xx % 10 == 0)
+		return false
+
+	var res = 0
+	while (xx > res) {
+		res = res * 10 + xx % 10
+		xx /= 10
+	}
+
+	return xx == res || xx == res / 10
+
+//  Solution Two
+//	var index = x.toString().length - 1
+//	var reversedX = ""
+//
+//	while (index >= 0) {
+//		reversedX = "$reversedX${x.toString()[index]}"
+//		index--
+//	}
+//
+//	return x.toString() == reversedX
+}
+
+fun isMatch(s: String = "ab", p: String = ".*"): Boolean = p.toRegex().matches(s)
+
+fun findMedianSortedArrays(nums1: IntArray = intArrayOf(1, 3), nums2: IntArray = intArrayOf(2, 4)): Double {
+	val mergedArray = nums1.plus(nums2).sortedArray()
+	val totalSize = mergedArray.size
+	val midPoint = Math.round(totalSize.toDouble() / 2).toInt()
+
+	val median : Double = if (totalSize % 2 > 0) {
+		mergedArray[midPoint - 1].toDouble()
+	} else {
+		(mergedArray[midPoint - 1] + mergedArray[midPoint]).toDouble() / 2
+	}
+	return median
+}
+
+fun lengthOfLongestSubstring(s: String = "dfdhfkiff"): Int {
+	var maxRun = 0
+	var currentRun = 0
+	val lastBuilder = StringBuilder()
+	s.forEach { char ->
+		if (lastBuilder.contains(char)) {
+			val lastIndex = lastBuilder.indexOf(char) + 1
+			lastBuilder.delete(0, lastIndex)
+			lastBuilder.append(char)
+			currentRun = lastBuilder.length
+		} else {
+			lastBuilder.append(char)
+			currentRun ++
+		}
+		maxRun = if (maxRun > currentRun) maxRun else currentRun
+	}
+
+	return maxRun
+}
+
+fun twoSumPro(nums: IntArray = intArrayOf(3,2,4), target: Int = 6): IntArray {
+	val diffMap = mutableMapOf<Int, Int>()
+	nums.forEachIndexed { index, int ->
+		println("Number of months is *$int*$index")
+		println("Number of months is *${diffMap}*")
+		diffMap[int]?.let { return intArrayOf(it, index) }
+		diffMap[target - int] = index
+	}
+	return intArrayOf()
+}
+
+fun twoSum(nums: IntArray = intArrayOf(3,2,4), target: Int = 6): IntArray {
+	var indicesArray: IntArray = intArrayOf()
+	firstLoop@for (index in nums.indices) {
+		println("Number of months is *${nums[index]}*")
+		val number = nums.find { it == target - nums[index] }
+		if (number != null) {
+			indicesArray = intArrayOf(index, nums.indexOf(number))
+			break@firstLoop
+		}
+	}
+	return indicesArray
 }
 
 fun String?.getInitials(): String {
 	var initials = ""
+
+//	for (nIndex in index + 1 until nums.size) {
+//		val secondNumber = nums[nIndex]
+//		if (firstNumber + secondNumber == target) {
+//			indicesArray = intArrayOf(index, nIndex)
+//			break@firstLoop
+//		}
+//	}
 
 	this?.let {
 		// Clear unnecessary white spaces i.e Kelvin   Kioko to Kelvin Kioko
