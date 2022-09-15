@@ -155,10 +155,10 @@ class ValidateHVTTest {
 class TestRanges {
 	@Test
 	fun validateOpeningAmountLogic() {
-		assertEquals(false, validateOpeningAmount(amount = 23000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
-		assertEquals(true, validateOpeningAmount(amount = 25000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
-		assertEquals(true, validateOpeningAmount(amount = 1000000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
-		assertEquals(true, validateOpeningAmount(amount = 50000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
+//		assertEquals(false, validateOpeningAmount(amount = 23000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
+//		assertEquals(true, validateOpeningAmount(amount = 25000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
+//		assertEquals(true, validateOpeningAmount(amount = 1000000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
+//		assertEquals(true, validateOpeningAmount(amount = 50000.0f, minimumAmount = 25000.0f, maximumAmount = 1000000.0f))
 //		assertEquals(true, validateRecurrent(controlID = 2, oneTimeID = 1))
 //		assertEquals(true, validateRecurrent(controlID = 3, oneTimeID = 1))
 //		assertEquals(true, validateRecurrent(controlID = 4, oneTimeID = 1))
