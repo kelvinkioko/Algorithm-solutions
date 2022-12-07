@@ -1,14 +1,28 @@
 package com.codility.codewar
 
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import java.util.Stack
 import java.util.regex.Pattern
 
 fun main(args: Array<String>) {
+	println("1667175620".getDateTime())
 	// println("Searching challenge ${searchingChallenge(str = "2aabbcbbbadef")}")
 }
+
+private fun String.getDateTime(): String {
+	val randDate = Date(this.toLong() * 1000)
+	val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+	return format.format(randDate)
+}
+
+data class DescriptionPart(
+	var title: String = "Classic account",
+	var description: String = "• Deposit funds into the account as often as you would like to\n• Your savings are easily available on request\n• Earn a daily annual return\n• No charges to move money from your savings account to your bank account\n\nBonus:\n• There are no monthly charges or fees to operate this account"
+)
 
 fun isMatch(s: String = "ab", p: String = ".*"): Boolean = p.toRegex().matches(s)
 
@@ -105,4 +119,3 @@ private fun testModulus() {
 	println(v)
 	println(address)
 }
-

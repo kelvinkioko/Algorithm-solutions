@@ -1,32 +1,22 @@
 package com.codility.codewar
 
-import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
-import java.util.Locale
 
 class DateDifference(
-    firstDate: String,
-    finalDate: String,
-    val differenceCallBack: ((DateDifferenceModel) -> Unit)
-)
-{
-    var dateDifference = DateDifferenceModel()
+    val firstDate: Long,
+    val finalDate: Long
+) {
+    private var dateDifference = DateDifferenceModel()
+    private val startDate = Calendar.getInstance().also { it.time = Date(firstDate) }
+    private val endDate = Calendar.getInstance().also { it.time = Date(finalDate) }
 
-    init {
-        dateDifference(firstDate = firstDate, finalDate = finalDate)
-    }
-
-    private fun dateDifference(firstDate: String, finalDate: String) {
-        val startDate = Calendar.getInstance()
-        val endDate = Calendar.getInstance()
-
-        startDate.time = Date(firstDate.toDate())
-        endDate.time = Date(finalDate.toDate())
-
+    fun dateDifference() : DateDifferenceModel {
         val yearDiff = endDate.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)
         var monthDiff = endDate.get(Calendar.MONTH) - startDate.get(Calendar.MONTH)
         val dayDiff = endDate.get(Calendar.DAY_OF_YEAR) - startDate.get(Calendar.DAY_OF_YEAR)
+
+        println(startDate.getActualMaximum(Calendar.MONTH))
 
         if (yearDiff > 0) {
             dateDifference.year = if (endDate.get(Calendar.MONTH) > startDate.get(Calendar.MONTH))
@@ -36,66 +26,46 @@ class DateDifference(
         }
 
         if (yearDiff == 0 && monthDiff == 0) {
+            // Same year and same month, the only difference is days
             dateDifference.day = dayDiff
         } else {
-            monthDiff = if (monthDiff > 1 && dayDiff > 28) {
+            /** Can be same year but different months or different months and same year or
+             * different months and years
+             *
+             * Check if the end month is greater than the start month and days are more than 28
+             * if they are reduce the monthDiff by one
+             * if not then the end month is behind the start month which means it falls in the next year so we need to count how many months there are in between
+             */
+            monthDiff = if (monthDiff > 0 && dayDiff > 28) {
                 monthDiff - 1
             } else {
                 (11 - startDate.get(Calendar.MONTH)) + endDate.get(Calendar.MONTH)
             }
 
-            dayMonthDiff(
-                monthDiff = monthDiff,
-                startDate = startDate,
-                endDate = endDate
-            )
+            /**
+             * Here we calculate the number of days between the start date and the end date
+             * We'll use that value to calculate the exact days, months and years to present as the final total
+             */
+            val startMonth = getMonths().filter { it.month == startDate.get(Calendar.MONTH) }[0]
+            val startMonthDayDiff = startMonth.days - startDate.get(Calendar.DAY_OF_MONTH)
+            val endMonthDayDiff = endDate.get(Calendar.DAY_OF_MONTH)
+
+            val sumDaysDiff = startMonthDayDiff + endMonthDayDiff
+
+
+            val days = sumDaysDiff % startMonth.days // Will return the number of days left
+            val months = monthDiff + (sumDaysDiff / startMonth.days) // Original months + number of extra months we can get from the total number of days between start date and end date
+            val years = months / 12 // Number of extra years we can get from the new number of months above
+
+            dateDifference = dateDifference.also {
+                it.year += years
+                it.month = months % 12
+                it.day = days
+            }
         }
 
-//        if (endDate.get(Calendar.MONTH) > startDate.get(Calendar.MONTH) && monthDiff > 1 && dayDiff > 28) {
-//            println("if -$firstDate-$finalDate")
-//            monthDiff -= 1
-//
-//            dayMonthDiff(
-//                monthDiff = monthDiff,
-//                startDate = startDate,
-//                endDate = endDate
-//            )
-//        } else if (yearDiff > 0) {
-//            println("else if -$firstDate-$finalDate")
-//            monthDiff = (11 - startDate.get(Calendar.MONTH)) + endDate.get(Calendar.MONTH)
-//
-//            dayMonthDiff(
-//                monthDiff = monthDiff,
-//                startDate = startDate,
-//                endDate = endDate
-//            )
-//        } else {
-//            println("else -$firstDate-$finalDate")
-//            dateDifference.day = dayDiff
-//        }
-
-        differenceCallBack(dateDifference)
+        return dateDifference
     }
-
-    private fun dayMonthDiff(monthDiff: Int, startDate: Calendar, endDate: Calendar) {
-        val startMonth = getMonths().filter { it.month == startDate.get(Calendar.MONTH) }[0]
-        val startMonthDayDiff = startMonth.days - startDate.get(Calendar.DAY_OF_MONTH)
-        val endMonthDayDiff = endDate.get(Calendar.DAY_OF_MONTH)
-
-        val sumDaysDiff = startMonthDayDiff + endMonthDayDiff
-
-        val daysDiv = sumDaysDiff / startMonth.days
-        val daysModulus = sumDaysDiff % startMonth.days
-
-        dateDifference = dateDifference.also {
-            it.month = monthDiff + daysDiv
-            it.day = daysModulus
-        }
-    }
-
-    private fun String.toDate(): Long =
-        SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(this)?.time
-            ?: 0L
 
     data class DateDifferenceModel(
         var year: Int = 0,

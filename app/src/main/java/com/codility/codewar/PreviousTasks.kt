@@ -49,7 +49,6 @@ fun regexURL(dirtyUrl: String, newInstance: String) : String {
     val urlRegex = "\\w{4,5}://\\w{1,20}\\.\\w{5}\\.\\w{3}/\\w{3}/".toRegex(setOf(RegexOption.IGNORE_CASE))
     val urlWHyphenRegex = "\\w{4,5}://\\w{1,20}-\\w{1,20}\\.\\w{5}\\.\\w{3}/\\w{3}/".toRegex(setOf(RegexOption.IGNORE_CASE))
     val clearedURL =  dirtyUrl.replace(if (dirtyUrl.contains(urlRegex)) urlRegex else urlWHyphenRegex, "")
-
     println("Cleared URL $clearedURL")
     return clearedURL
 }
