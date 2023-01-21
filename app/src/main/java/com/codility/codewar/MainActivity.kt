@@ -8,8 +8,21 @@ import java.util.Locale
 import java.util.Stack
 import java.util.regex.Pattern
 
+open class A {
+	open val a = "A"
+	init {
+	    println(a)
+	}
+}
+
+class B: A() {
+	override val a: String
+		get() = "B"
+}
+
 fun main(args: Array<String>) {
-	println("1667175620".getDateTime())
+	B()
+	//println("1667175620".getDateTime())
 	// println("Searching challenge ${searchingChallenge(str = "2aabbcbbbadef")}")
 }
 
